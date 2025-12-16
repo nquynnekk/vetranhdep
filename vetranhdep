@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>vetranhdep.com - Web Vẽ Miễn Phí</title>
+<style>
+body {
+  margin: 0;
+  background: linear-gradient(135deg, #ffd6e8, #e0f0ff);
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+h1 {
+  margin: 15px 0;
+  color: #ff5fa2;
+}
+.toolbar {
+  background: white;
+  padding: 10px;
+  border-radius: 12px;
+  display: inline-flex;
+  gap: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+button {
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: #ff7abf;
+  color: white;
+}
+canvas {
+  background: white;
+  border-radius: 16px;
+  margin-top: 10px;
+  touch-action: none;
+}
+</style>
+</head>
+<body>
+
+<h1>🎨 vetranhdep.com 🎨</h1>
+
+<div class="toolbar">
+  <input type="color" id="color">
+  <input type="range" id="size" min="1" max="30" value="5">
+  <button onclick="clearCanvas()">Xóa</button>
+  <button onclick="saveImage()">Tải</button>
+</div>
+
+<br>
+
+<canvas id="canvas" width="800" height="500"></canvas>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+let painting = false;
+
+function pos(e){
+  const r = canvas.getBoundingClientRect();
+  return e.touches
+    ? {x:e.touches[0].clientX-r.left,y:e.touches[0].clientY-r.top}
+    : {x:e.offsetX,y:e.offsetY};
+}
+
+function start(e){painting=true;draw(e);}
+function end(){painting=false;ctx.beginPath();}
+function draw(e){
+  if(!painting)return;
+  const p=pos(e);
+  ctx.lineWidth=size.value;
+  ctx.lineCap="round";
+  ctx.strokeStyle=color.value;
+  ctx.lineTo(p.x,p.y);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(p.x,p.y);
+}
+
+canvas.onmousedown=start;
+canvas.onmouseup=end;
+canvas.onmousemove=draw;
+canvas.ontouchstart=start;
+canvas.ontouchend=end;
+canvas.ontouchmove=draw;
+
+function clearCanvas(){ctx.clearRect(0,0,canvas.width,canvas.height);}
+function saveImage(){
+  const a=document.createElement("a");
+  a.download="vetranhdep.png";
+  a.href=canvas.toDataURL();
+  a.click();
+}
+</script>
+
+</body>
+</html>
